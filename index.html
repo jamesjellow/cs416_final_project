@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Slideshow with Adaptive Content Width</title>
+    <title>Responsive Slideshow with Four Slides</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -25,7 +27,7 @@
         .slide {
             display: none;
         }
-        .slide img {
+        .slide img, .slide svg {
             width: 100%;
             height: auto;
             max-height: 600px;
@@ -105,27 +107,34 @@
     </style>
 </head>
 <body>
-    <div class="slideshow-container">
+    <div class="slideshow-container">   
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">Beautiful Nature</h2>
-                <p class="slide-description">Explore the serene beauty of untouched landscapes. This breathtaking view showcases the harmony of nature in its purest form.</p>
+                <h2 class="slide-title">Welcome to Our Slideshow</h2>
+                <p class="slide-description">Embark on a visual journey through diverse landscapes and artistic expressions. This slideshow showcases the beauty of our world in various forms.</p>
             </div>
-            <img src="https://picsum.photos/1200/600?random=1" alt="Nature Landscape">
+            <img src="https://picsum.photos/1200/600?random=0" alt="Welcome Slide">
+        </div>
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">Air Traffic Trends</h2>
+                <p class="slide-description">Explore the trends in air traffic over the years, showcasing international, domestic, and total passenger numbers.</p>
+                <div id="chart1"></div>
+            </div>
         </div>
         <div class="slide">
             <div class="slide-content">
                 <h2 class="slide-title">Urban Jungle</h2>
                 <p class="slide-description">Discover the vibrant energy of city life. This urban landscape captures the essence of modern architecture and bustling streets.</p>
+                <div id="chart2"></div>
             </div>
-            <img src="https://picsum.photos/1200/600?random=2" alt="Urban Scene">
         </div>
         <div class="slide">
             <div class="slide-content">
                 <h2 class="slide-title">Abstract Wonders</h2>
                 <p class="slide-description">Immerse yourself in the world of abstract art. This piece challenges perceptions and invites viewers to interpret its meaning.</p>
+                <div id="chart3"></div>
             </div>
-            <img src="https://picsum.photos/1200/600?random=3" alt="Abstract Art">
         </div>
         <div class="button-container">
             <button id="prevBtn" class="btn" onclick="changeSlide(-1)">Previous</button>
@@ -155,8 +164,256 @@
             nextBtn.disabled = (currentSlide === slides.length - 1);
         }
 
-        // Show the first slide initially
-        showSlide(0);
+        showSlide(1);
+
+        // Chart 1: Air Traffic Trends
+        d3.csv("https://raw.githubusercontent.com/jamesjellow/data/main/air_traffic.csv").then(data => {
+            const parseDate = d3.timeParse("%Y-%m");
+
+            data.forEach(d => {
+                d.date = parseDate(d.Year + "-" + d.Month);
+                d.international = +d.Int_Pax.replace(/,/g, '');
+                d.domestic = +d.Dom_Pax.replace(/,/g, '');
+                d.total = +d.Pax.replace(/,/g, '');
+            });
+
+            data.sort((a, b) => a.date - b.date);
+
+            const margin = {top: 20, right: 20, bottom: 50, left: 90},
+                  width = 1000 ,
+                  height = 500 ;
+
+            const x = d3.scaleTime().range([0, width]);
+            const y = d3.scaleLinear().range([height, 0]);
+
+            const lineInternational = d3.line()
+                .x(d => x(d.date))
+                .y(d => y(d.international));
+
+            const lineDomestic = d3.line()
+                .x(d => x(d.date))
+                .y(d => y(d.domestic));
+
+            const lineTotal = d3.line()
+                .x(d => x(d.date))
+                .y(d => y(d.total));
+
+            const svg = d3.select("#chart1").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            x.domain(d3.extent(data, d => d.date));
+            y.domain([0, d3.max(data, d => Math.max(d.international, d.domestic, d.total))]);
+
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x))
+                .append("text")
+                .attr("class", "axis-label")
+                .attr("x", width / 2)
+                .attr("y", 40)
+                .attr("fill", "#000")
+                .style("text-anchor", "middle")
+                .style("font-size", "12px")
+                .text("Year");
+
+            svg.append("g")
+                .call(d3.axisLeft(y))
+                .append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -height / 2)
+                .attr("y", -80)
+                .attr("fill", "#000")
+                .style("text-anchor", "middle")
+                .style("font-size", "12px")
+                .text("Number of Passengers");
+
+            svg.append("path")
+                .data([data])
+                .attr("class", "line")
+                .attr("d", lineInternational)
+                .style("fill", "none")
+                .style("stroke", "steelblue")
+                .style("stroke-width", "1.5px");
+
+            svg.append("path")
+                .data([data])
+                .attr("class", "line")
+                .attr("d", lineDomestic)
+                .style("fill", "none")
+                .style("stroke", "green")
+                .style("stroke-width", "1.5px");
+
+            svg.append("path")
+                .data([data])
+                .attr("class", "line")
+                .attr("d", lineTotal)
+                .style("fill", "none")
+                .style("stroke", "red")
+                .style("stroke-width", "1.5px");
+
+            const hoverGroupTotal = svg.append("g").attr("class", "hover-group-total");
+            const hoverGroupDomestic = svg.append("g").attr("class", "hover-group-domestic");
+            const hoverGroupInternational = svg.append("g").attr("class", "hover-group-international");
+
+            function createHoverCircles(group, yAccessor, color) {
+                group.selectAll(".hover-circle")
+                    .data(data)
+                    .enter().append("circle")
+                    .attr("class", "hover-circle")
+                    .attr("cx", d => x(d.date))
+                    .attr("cy", d => y(yAccessor(d)))
+                    .attr("r", 5)
+                    .style("fill", color)
+                    .style("opacity", 0.5)  // Make circles semi-transparent
+                    .style("pointer-events", "all");
+            }
+
+            createHoverCircles(hoverGroupTotal, d => d.total, "none");
+            createHoverCircles(hoverGroupDomestic, d => d.domestic, "none");
+            createHoverCircles(hoverGroupInternational, d => d.international, "none");
+
+            const tooltip = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0)
+                .style("position", "absolute")
+                .style("background-color", "white")
+                .style("border", "1px solid #ddd")
+                .style("padding", "10px")
+                .style("border-radius", "5px")
+                .style("pointer-events", "none");  // Prevent tooltip from interfering with hover
+
+            function handleMouseOver(event, d, category) {
+                console.log("Mouseover event triggered", category, d);  // Debug log
+                d3.select(this).style("opacity", 1);  // Make hovered circle fully opaque
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltip.html(`Date: ${d3.timeFormat("%B %Y")(d.date)}<br/>
+                            ${category}: ${d3.format(",")(d[category.toLowerCase()])}`)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+            }
+
+            function handleMouseOut() {
+                console.log("Mouseout event triggered");  // Debug log
+                d3.select(this).style("opacity", 0.5);  // Return to semi-transparent
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            }
+
+            function addHoverToGroup(group, category) {
+                group.selectAll(".hover-circle")
+                    .on("mouseover", function(event, d) {
+                        handleMouseOver.call(this, event, d, category);
+                    })
+                    .on("mouseout", handleMouseOut);
+            }
+
+            addHoverToGroup(hoverGroupTotal, "Total");
+            addHoverToGroup(hoverGroupDomestic, "Domestic");
+            addHoverToGroup(hoverGroupInternational, "International");
+
+            const legend = svg.append("g")
+                .attr("class", "legend")
+                .attr("transform", `translate(${width - 100},${250})`);
+
+            legend.append("rect")
+                .attr("width", 140)
+                .attr("height", 80)
+                .attr("fill", "white")
+                .attr("stroke", "black");
+
+            legend.append("text")
+                .attr("x", 10)
+                .attr("y", 20)
+                .attr("fill", "steelblue")
+                .style("text-anchor", "start")
+                .text("International");
+
+            legend.append("text")
+                .attr("x", 10)
+                .attr("y", 40)
+                .attr("fill", "green")
+                .style("text-anchor", "start")
+                .text("Domestic");
+
+            legend.append("text")
+                .attr("x", 10)
+                .attr("y", 60)
+                .attr("fill", "red")
+                .style("text-anchor", "start")
+                .text("Total");
+
+            legend.append("rect")
+                .attr("x", 120)
+                .attr("y", 10)
+                .attr("width", 10)
+                .attr("height", 10)
+                .attr("fill", "steelblue");
+
+            legend.append("rect")
+                .attr("x", 120)
+                .attr("y", 30)
+                .attr("width", 10)
+                .attr("height", 10)
+                .attr("fill", "green");
+
+            legend.append("rect")
+                .attr("x", 120)
+                .attr("y", 50)
+                .attr("width", 10)
+                .attr("height", 10)
+                .attr("fill", "red");
+
+            const annotations = [
+                {
+                    note: {
+                        label: "COVID-19 Pandemic",
+                        title: "March 2020",
+                        align: "middle",
+                        wrap: 200
+                    },
+                    // Can use x, y directly instead of data
+                    data: { date: new Date(2020, 3), total: 3013899 },
+                    dy: -100,
+                    dx: -50,
+                    subject: { radius: 3 }
+                },
+                {
+                    note: {
+                        label: "Pre-Pandemic Peak",
+                        title: "July 2019",
+                        align: "middle",
+                        wrap: 200
+                    },
+                    data: { date: new Date(2019, 6, 1), total: 86_925_851 },
+                    dy: 0,
+                    dx: -200,
+                    subject: { radius: 4 }
+                }
+            ];
+
+            const makeAnnotations = d3.annotation()
+                .type(d3.annotationCalloutCircle)
+                .accessors({
+                    x: d => x(d.date),
+                    y: d => y(d.total)
+                })
+                .annotations(annotations);
+
+            svg.append("g")
+                .attr("class", "annotation-group")
+                .call(makeAnnotations);
+        });
+        
+
+    // Chart 2 and Chart 3 code remains the same
+    // ...
     </script>
 </body>
 </html>
