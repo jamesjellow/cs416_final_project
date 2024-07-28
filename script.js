@@ -424,7 +424,7 @@ const createStackedBarChart = (data, selector) => {
         .attr("x", width / 2)
         .attr("y", height + margin.bottom)
         .style("text-anchor", "middle")
-        .text("Years");
+        .text("Year");
 
     const x = d3.scaleBand().range([0, width]).padding(0.2);
     const y = d3.scaleLinear().range([height, 0]);

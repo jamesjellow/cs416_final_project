@@ -12,28 +12,40 @@
     <div class="slideshow-container">   
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">Air Traffic Trends</h2>
+                <h2 class="slide-title">Air Traffic Trends: A Journey Through Time</h2>
                 <p class="slide-description">Explore the trends in air traffic over the years, showcasing international, domestic, and total passenger numbers.</p>
+                <p class="slide-description">High level we can see that there is a linear increase over time from the epoch of 2003 up to 2020 when the Covid-19 pandemic hit. Travel was severely impacted as you can clearly see by the annotated indicators. Feel free to mouse over the different datapoints to see more detail about a specific datapoint on a specific date. In addition, we also realize a rapid rebound in travel with travels levels starting to normalize around 2022. In 2023, we even see that level meet and even exceed that of pre-pandemic levels.</p>
+
                 <div id="chart1"></div>
             </div>
         </div>
         <div class="slide">
             <div class="slide-content">
                 <h2 class="slide-title">Heatmap of Total Travel per Year-Month</h2>
-                <p class="slide-description">Discover the vibrant energy of city life. This urban landscape captures the essence of modern architecture and bustling streets.</p>
+                <p class="slide-description">Next up is the heapmap of total travel per year-month. This clearly depicts the total number of passengers that travelled within each month.</p>
+                <p>Drilling down into this diagram, we can make a couple observations:</p>
+                <ul>
+                    <li>2020 Was the year of least travel due to all the cold spots</li>
+                    <li>August-March tend to be the busiest travel months</li>
+                    <li>Travel is mild on the other months except for a few hotspots at the end of the Winter holidays</li>
+                    </ul>
+                </ul>                    
                 <div id="chart2"></div>
             </div>
         </div>
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">Abstract Wonders</h2>
-                <p class="slide-description">Immerse yourself in the world of abstract art. This piece challenges perceptions and invites viewers to interpret its meaning.</p>
+                <h2 class="slide-title">Passenger-Miles, Available Seat-Miles, and Load Factor</h2>
+                <p class="slide-description">For our final visualization, we will be stacking 3 different fields on top of each other. The point of this visualization is to see how these 3 metrics correlate and if at all affect each other.</p>
                 <ul>
-                    <li ><strong style="color: #ff9999;">Revenue Passenger-miles</strong> = the number of passengers and the distance flown in thousands (000)</li>
-                    <li><strong style="color: #66ff66;">Available Seat-miles</strong> = the number of seats and the distance flown in thousands (000)</li>
-                    <li ><strong style="color: #99ccff;">Load Factor</strong> = passenger-miles as a proportion of available seat-miles in percent (%)</li>
+                    <li><strong style="color: #ff9999;">Available Seat-miles (ASM)</strong> = the number of seats and the distance flown in thousands (000)</li>
+                    <li ><strong style="color: #66ff66;;">Revenue Passenger-miles (RPM)</strong> = the number of passengers and the distance flown in thousands (000)</li>
+                    <li ><strong style="color: #99ccff;">Load Factor (LF)</strong> = passenger-miles as a proportion of available seat-miles in percent (%)</li>
                 </ul>
-                <p>Click a button below to filter the viz based on domestic, international, or total</p>
+                <h3>What can we infer from this graph?</h3>
+                <p>Upon first glance we can see that there seems to a linear correlation between all 3 metrics. This means that the more passengers that travelled, the more seat-miles that were available and the efficiently airlines could make revenue. Is it really that simple? Well actually if we click on the "international" filter, we can actually take note that although domestic passengers were more numrous, international travellers were more profitable. Take for example 2019, international travelers accounted for 28% of total passengers but accounted for almost 30% of total revenue. This can explain why airlines heavily target international travellers and cater towards international markets. We can also observe that since the load factor is lower than domestic flights, we know that there is more room to grow for international flights especially in the rebounding travel economy.</p>
+                <h3>Filtering</h3>
+                <p>Click a button below to filter the viz based on domestic, international, or total travel.</p>
                 <div class="buttons">
                     <button id="totalBtn">Total</button>
                     <button id="domesticBtn">Domestic</button>
@@ -50,4 +62,4 @@
 
     <script src="script.js"></script>
 </body>
-</html>
+</html>#66ff66;
