@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Slideshow with Four Slides</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="slideshow-container">   
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">Air Traffic Trends</h2>
+                <p class="slide-description">Explore the trends in air traffic over the years, showcasing international, domestic, and total passenger numbers.</p>
+                <div id="chart1"></div>
+            </div>
+        </div>
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">Heatmap of Total Travel per Year-Month</h2>
+                <p class="slide-description">Discover the vibrant energy of city life. This urban landscape captures the essence of modern architecture and bustling streets.</p>
+                <div id="chart2"></div>
+            </div>
+        </div>
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">Abstract Wonders</h2>
+                <p class="slide-description">Immerse yourself in the world of abstract art. This piece challenges perceptions and invites viewers to interpret its meaning.</p>
+                <ul>
+                    <li ><strong style="color: #ff9999;">Revenue Passenger-miles</strong> = the number of passengers and the distance flown in thousands (000)</li>
+                    <li><strong style="color: #66ff66;">Available Seat-miles</strong> = the number of seats and the distance flown in thousands (000)</li>
+                    <li ><strong style="color: #99ccff;">Load Factor</strong> = passenger-miles as a proportion of available seat-miles in percent (%)</li>
+                </ul>
+                <p>Click a button below to filter the viz based on domestic, international, or total</p>
+                <div class="buttons">
+                    <button id="totalBtn">Total</button>
+                    <button id="domesticBtn">Domestic</button>
+                    <button id="internationalBtn">International</button>
+                </div>
+                <div id="chart3"></div>
+            </div>
+        </div>
+        <div class="button-container">
+            <button id="prevBtn" class="btn" onclick="changeSlide(-1)">Previous</button>
+            <button id="nextBtn" class="btn" onclick="changeSlide(1)">Continue</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
